@@ -15,6 +15,7 @@ type Data = io.Reader
 type SectorRef struct {
 	ID        abi.SectorID
 	ProofType abi.RegisteredSealProof
+	HasDeal   bool
 }
 
 type Storage interface {
