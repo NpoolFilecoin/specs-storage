@@ -15,6 +15,7 @@ type Data = io.Reader
 type SectorRef struct {
 	ID        abi.SectorID
 	ProofType abi.RegisteredSealProof
+	HasDeal   bool
 }
 
 type Storage interface {
@@ -66,6 +67,7 @@ type Sealer interface {
 	// ReleaseUnsealed marks parts of the unsealed sector file as safe to drop
 	//  (called by the fsm on restart, allows storage to keep no persistent
 	//   state about unsealed fast-retrieval copies)
+	MovingCache(ctx context.Context, sector SectorRef) error
 	ReleaseUnsealed(ctx context.Context, sector SectorRef, safeToFree []Range) error
 	ReleaseSectorKey(ctx context.Context, sector SectorRef) error
 	ReleaseReplicaUpgrade(ctx context.Context, sector SectorRef) error
