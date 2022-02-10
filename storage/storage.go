@@ -7,7 +7,8 @@ import (
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/ipfs/go-cid"
 
-	proof "github.com/filecoin-project/specs-actors/v7/actors/runtime/proof"
+	"github.com/filecoin-project/specs-actors/actors/runtime/proof"
+	proof7 "github.com/filecoin-project/specs-actors/v7/actors/runtime/proof"
 )
 
 type Data = io.Reader
@@ -27,8 +28,8 @@ type Storage interface {
 }
 
 type Prover interface {
-	GenerateWinningPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof.ExtendedSectorInfo, randomness abi.PoStRandomness) ([]proof.PoStProof, error)
-	GenerateWindowPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof.ExtendedSectorInfo, randomness abi.PoStRandomness) (proof []proof.PoStProof, skipped []abi.SectorID, err error)
+	GenerateWinningPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof7.ExtendedSectorInfo, randomness abi.PoStRandomness) ([]proof.PoStProof, error)
+	GenerateWindowPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof7.ExtendedSectorInfo, randomness abi.PoStRandomness) (proof []proof.PoStProof, skipped []abi.SectorID, err error)
 }
 
 type PreCommit1Out []byte
