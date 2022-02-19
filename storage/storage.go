@@ -7,7 +7,8 @@ import (
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/ipfs/go-cid"
 
-	proof "github.com/filecoin-project/specs-actors/v7/actors/runtime/proof"
+	"github.com/filecoin-project/specs-actors/actors/runtime/proof"
+	proof7 "github.com/filecoin-project/specs-actors/v7/actors/runtime/proof"
 )
 
 type Data = io.Reader
@@ -15,6 +16,7 @@ type Data = io.Reader
 type SectorRef struct {
 	ID        abi.SectorID
 	ProofType abi.RegisteredSealProof
+	HasDeal   bool
 }
 
 type Storage interface {
@@ -26,8 +28,8 @@ type Storage interface {
 }
 
 type Prover interface {
-	GenerateWinningPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof.ExtendedSectorInfo, randomness abi.PoStRandomness) ([]proof.PoStProof, error)
-	GenerateWindowPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof.ExtendedSectorInfo, randomness abi.PoStRandomness) (proof []proof.PoStProof, skipped []abi.SectorID, err error)
+	GenerateWinningPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof7.ExtendedSectorInfo, randomness abi.PoStRandomness) ([]proof.PoStProof, error)
+	GenerateWindowPoSt(ctx context.Context, minerID abi.ActorID, sectorInfo []proof7.ExtendedSectorInfo, randomness abi.PoStRandomness) (proof []proof.PoStProof, skipped []abi.SectorID, err error)
 }
 
 type PreCommit1Out []byte
@@ -66,6 +68,7 @@ type Sealer interface {
 	// ReleaseUnsealed marks parts of the unsealed sector file as safe to drop
 	//  (called by the fsm on restart, allows storage to keep no persistent
 	//   state about unsealed fast-retrieval copies)
+	MovingCache(ctx context.Context, sector SectorRef) error
 	ReleaseUnsealed(ctx context.Context, sector SectorRef, safeToFree []Range) error
 	ReleaseSectorKey(ctx context.Context, sector SectorRef) error
 	ReleaseReplicaUpgrade(ctx context.Context, sector SectorRef) error
