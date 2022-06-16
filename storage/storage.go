@@ -2,12 +2,11 @@ package storage
 
 import (
 	"context"
+	"github.com/filecoin-project/go-state-types/proof"
+	"github.com/ipfs/go-cid"
 	"io"
 
 	"github.com/filecoin-project/go-state-types/abi"
-	"github.com/ipfs/go-cid"
-
-	proof "github.com/filecoin-project/specs-actors/v7/actors/runtime/proof"
 )
 
 type Data = io.Reader
@@ -18,10 +17,14 @@ type SectorRef struct {
 	HasDeal   bool
 }
 
+var NoSectorRef = SectorRef{}
+
 type Storage interface {
 	// Creates a new empty sector (only allocate on disk. Layers above
 	//  storage are responsible for assigning sector IDs)
 	NewSector(ctx context.Context, sector SectorRef) error
+	// Compute Data CID
+	DataCid(ctx context.Context, pieceSize abi.UnpaddedPieceSize, pieceData Data) (abi.PieceInfo, error)
 	// Add a piece to an existing *unsealed* sector
 	AddPiece(ctx context.Context, sector SectorRef, pieceSizes []abi.UnpaddedPieceSize, newPieceSize abi.UnpaddedPieceSize, pieceData Data) (abi.PieceInfo, error)
 }
